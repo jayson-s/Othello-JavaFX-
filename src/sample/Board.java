@@ -133,7 +133,7 @@ public class Board {
 
                 if(isIllegal(i, j) == 0) {
                     moves++;
-                    Circle circle = new Circle(20, 20, 25);
+                    Circle circle = new Circle(20, 20, 30);
                     circle.setFill(Color.RED);
                     possibleMoves.add(circle);
                     pane.add(circle, i, j);
