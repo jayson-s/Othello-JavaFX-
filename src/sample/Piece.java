@@ -1,3 +1,6 @@
+// Othello
+// 03/15/2020
+
 package sample;
 
 import javafx.scene.paint.Color;
