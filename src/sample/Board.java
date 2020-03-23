@@ -15,8 +15,8 @@ public class Board {
     private int gameOverCounter = 0;
     protected int player = 0;
     private boolean started = false;
-    protected int scoreB = 0;
-    protected int scoreW = 0;
+    public int scoreB = 0;
+    public int scoreW = 0;
     protected ArrayList<Circle> possibleMoves = new ArrayList<>();
 
     //array of pieces

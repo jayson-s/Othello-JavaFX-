@@ -54,26 +54,66 @@ public class Main extends Application {
         menuBar.getMenus().addAll(menu1, menu2, menu3);
 
         //Create side tab to right of GridPane
-        Text t = new Text();
-        t.setText("Leader Board:");
-        t.setFont(Font.font("Century Gothic", FontWeight.BOLD, 36));
-        t.setFill(Color.BLACK);
-        t.setTextAlignment(TextAlignment.CENTER);
+        Text title = new Text();
+        title.setText("Player Scores");
+        title.setFont(Font.font("Century Gothic", FontWeight.BOLD, 40));
+        title.setFill(Color.WHITE);
+        title.setUnderline(true);
 
-        Text t2 = new Text();
-        t2.setText("Count:");
-        t2.setFont(Font.font("Century Gothic", FontWeight.BOLD, 36));
-        t2.setFill(Color.BLACK);
-        t2.setTextAlignment(TextAlignment.CENTER);
+        //Setup for black score
+        Text bT = new Text();
+        bT.setText("Black Player:");
+        bT.setFont(Font.font("Century Gothic", FontWeight.BOLD, 36));
+        bT.setFill(Color.BLACK);
 
-        Circle circle = new Circle(750, 100, 30);
-        circle.setFill(Color.BLACK);
+        Circle bC = new Circle(20);
+        bC.setFill(Color.BLACK);
 
-        VBox sideTab = new VBox(300, t, t2);
-        sideTab.getChildren().add(circle);
+        Text bCount = new Text();
+        bCount.setText("Count = ");
+        bCount.setFont(Font.font("Century Gothic", FontWeight.BOLD, 36));
+        bCount.setFill(Color.BLACK);
+
+        int blackScore = board.scoreB;
+        Text bScore = new Text();
+        bScore.setText(Integer.toString(blackScore));
+        bScore.setFont(Font.font("Century Gothic", FontWeight.BOLD, 36));
+        bScore.setFill(Color.BLACK);
+
+        HBox bRow = new HBox(10, bC, bCount, bScore);
+        VBox black = new VBox(40, title, bT, bRow);
+        black.setAlignment(Pos.BASELINE_LEFT);
+
+        //Setup for white score
+        Text wT = new Text();
+        wT.setText("White Player:");
+        wT.setFont(Font.font("Century Gothic", FontWeight.BOLD, 36));
+        wT.setFill(Color.WHITE);
+
+        Circle wC = new Circle(20);
+        wC.setFill(Color.WHITE);
+
+        Text wCount = new Text();
+        wCount.setText("Count = ");
+        wCount.setFont(Font.font("Century Gothic", FontWeight.BOLD, 36));
+        wCount.setFill(Color.WHITE);
+
+        int whiteScore = board.scoreW;
+        Text wScore = new Text();
+        wScore.setText(Integer.toString(whiteScore));
+        wScore.setFont(Font.font("Century Gothic", FontWeight.BOLD, 36));
+        wScore.setFill(Color.WHITE);
+
+        HBox wRow = new HBox(10, wC, wCount, wScore);
+        VBox white = new VBox(40, wT, wRow);
+        white.setAlignment(Pos.BASELINE_LEFT);
+
+        VBox sideTab = new VBox(125, black, white);
         sideTab.setMinWidth(300);
-        sideTab.setAlignment(Pos.BASELINE_CENTER);
-        
+        sideTab.setAlignment(Pos.TOP_CENTER);
+        sideTab.setPadding(new Insets(50, 20, 50, 20));
+        sideTab.setBackground(new Background(new BackgroundFill(Color.SLATEGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+
         //Add all panes to scene
         root.setCenter(pane);
         root.setTop(menuBar);
