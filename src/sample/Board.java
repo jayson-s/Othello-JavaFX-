@@ -2,13 +2,13 @@ package sample;
 
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.scene.effect.Bloom;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 
 public class Board {
@@ -18,7 +18,6 @@ public class Board {
     public int scoreB = 0;
     public int scoreW = 0;
     protected ArrayList<Circle> possibleMoves = new ArrayList<>();
-
     //array of pieces
     protected ArrayList<ArrayList<Piece>> pieces = new ArrayList<>(8);
 
@@ -30,7 +29,6 @@ public class Board {
         placement(pane, 4, 3);
         started = true;
         showLegal(pane);
-
     }
 
     public Board(GridPane pane, Stage stage) {
@@ -41,7 +39,6 @@ public class Board {
                 pieces.get(i).add(new Piece());  // fills array with pieces
             }
         }
-
         // create board
         pane.setGridLinesVisible(true);
         for (int i = 0; i < 8; i++) {
@@ -56,7 +53,6 @@ public class Board {
             rowConst.setValignment(VPos.CENTER);
             pane.getRowConstraints().add(rowConst);
         }
-
         start(pane);
     }
 
@@ -65,24 +61,20 @@ public class Board {
 
         if (started) {
             if (isIllegal(cI, rI) == 0) {
-
                 //toggling
                 for (int i = cI - 1; i < cI + 2; i++) {     // cells around placed piece
                     for (int j = rI - 1; j < rI + 2; j++) {
                         int diffX = i - cI;                 // unit vector direction
                         int diffY = j - rI;
-
                         // toggle all in a line in a direction
                         int c = 1;
                         for (int i2 = 1; i2 < 8; i2++) {
                             int dx = cI + (diffX * i2);    // all in a line
                             int dy = rI + (diffY * i2);
-
                             if (dx > 7 || dx < 0 || dy > 7 || dy < 0)  {    // stops NPE
                                 c = 1;
                                 break;
                             }
-
                             // determines amount to toggle
                             if (pieces.get(dx).get(dy).isPlaced) {
                                 if (pieces.get(dx).get(dy).isWhite != player) {
@@ -93,7 +85,6 @@ public class Board {
                                 break;
                             }
                         }
-
                         // toggle pieces
                         for (int c2 = 1; c2 < c; c2++) {
                             pieces.get(cI + (diffX * c2)).get(rI + (diffY * c2)).toggle();
@@ -102,10 +93,8 @@ public class Board {
                 }
                 pieces.get(cI).get(rI).place(player);
                 pane.add(pieces.get(cI).get(rI).getCircle(), cI, rI);
-
                 if (player == 0)      { player = 1; }
                 else if (player == 1) { player = 0; }
-
                 countScore();
                 showLegal(pane);
             }
@@ -113,10 +102,8 @@ public class Board {
         } else {
             pieces.get(cI).get(rI).place(player);
             pane.add(pieces.get(cI).get(rI).getCircle(), cI, rI);
-
             if (player == 0)      { player = 1; }
             else if (player == 1) { player = 0; }
-
             countScore();
         }
     }
@@ -124,27 +111,26 @@ public class Board {
     public void showLegal(GridPane pane) {
 
         int moves = 0;
-
         possibleMoves.forEach((n) -> pane.getChildren().remove(n));
         possibleMoves.clear();
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-
                 if(isIllegal(i, j) == 0) {
                     moves++;
                     Circle circle = new Circle(20, 20, 30);
                     circle.setFill(Color.RED);
+                    circle.setStroke(Color.DARKRED);
+                    circle.setStrokeWidth(3);
+                    circle.setOpacity(0.75);
                     possibleMoves.add(circle);
                     pane.add(circle, i, j);
                 }
             }
         }
         if (moves == 0) {
-
             if (player == 0)      { player = 1; }
             else if (player == 1) { player = 0; }
-
             gameOverCounter++;
 
             //end game if no moves left 2 times in a row

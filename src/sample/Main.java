@@ -3,27 +3,17 @@ package sample;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import java.util.ArrayList;
 
 public class Main extends Application {
 
@@ -31,15 +21,6 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Board board = new Board(pane, primaryStage);
-        int c = 0;
-        while(c < 1) {
-            pane.setOnMouseClicked(e -> {
-                int colIndex = (int) Math.round(e.getX()) / 90;
-                int rowIndex = (int) Math.round(e.getY()) / 90;
-                board.placement(pane, colIndex, rowIndex);
-            });
-            c++;
-        }
         BorderPane root = new BorderPane();
 
         //Set game pane in center and set background color
@@ -120,11 +101,28 @@ public class Main extends Application {
         root.setRight(sideTab);
         Scene scene = new Scene(root, 1050, 750);
 
+        //Placing disks and updating score
+        int c = 0;
+        while(c < 1) {
+            pane.setOnMouseClicked(e -> {
+                int colIndex = (int) Math.round(e.getX()) / 90;
+                int rowIndex = (int) Math.round(e.getY()) / 90;
+                board.placement(pane, colIndex, rowIndex);
+
+                //Work In Progress
+                //Figuring out count integration to increment every placement
+                int bS = count(blackScore);
+                int wS = count(whiteScore);
+                bScore.setText(Integer.toString(bS));
+                wScore.setText(Integer.toString(wS));
+
+
+            });
+            c++;
+        }
         //Setup stage
         primaryStage.setTitle("Othello");
         primaryStage.getIcons().add(new Image("https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcT3pUrDq671YtRKXsaUpVNoi6MIL6S9k1KbRWmxAo64MR44EDyu"));
-        primaryStage.setMinHeight(600);
-        primaryStage.setMinWidth(600);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
@@ -132,5 +130,9 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public int count(int n){
+        return n++;
     }
 }
