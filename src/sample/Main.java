@@ -109,14 +109,18 @@ public class Main extends Application {
                 int rowIndex = (int) Math.round(e.getY()) / 90;
                 board.placement(pane, colIndex, rowIndex);
 
-                //Work In Progress
-                //Figuring out count integration to increment every placement
-                int bS = count(blackScore);
-                int wS = count(whiteScore);
+                //count integration to increment every placement
+                int bS = count(blackScore) - 2;
+                int wS = count(whiteScore) - 2;
+
+                for (int i = 0; i < 8; i++) {
+                    for (int j = 0; j < 8; j++) {
+                        if (board.pieces.get(i).get(j).isPlaced && board.pieces.get(i).get(j).isWhite == 1) { wS++; }
+                        else if (board.pieces.get(i).get(j).isPlaced && board.pieces.get(i).get(j).isWhite == 0) { bS++; }
+                    }
+                }
                 bScore.setText(Integer.toString(bS));
                 wScore.setText(Integer.toString(wS));
-
-
             });
             c++;
         }

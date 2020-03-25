@@ -12,14 +12,14 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 public class Board {
-    private int gameOverCounter = 0;
-    protected int player = 0;
-    private boolean started = false;
+    public int gameOverCounter = 0;
+    public int player = 0;
+    public boolean started = false;
     public int scoreB = 0;
     public int scoreW = 0;
-    protected ArrayList<Circle> possibleMoves = new ArrayList<>();
+    public ArrayList<Circle> possibleMoves = new ArrayList<>();
     //array of pieces
-    protected ArrayList<ArrayList<Piece>> pieces = new ArrayList<>(8);
+    public ArrayList<ArrayList<Piece>> pieces = new ArrayList<>(8);
 
     public void start(GridPane pane) {
 
