@@ -1,11 +1,18 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -13,11 +20,17 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import java.io.*;
 
 public class Main extends Application {
-
     public GridPane pane = new GridPane();
+    private TableView<Person> leaderBoard = new TableView<Person>();
+    private final ObservableList<Person> data =
+            FXCollections.observableArrayList(
+                    new Person("Jayson", "40"),
+                    new Person("Ben", "36"));
     @Override
     public void start(Stage primaryStage) throws Exception{
         Board board = new Board(pane, primaryStage);
@@ -29,10 +42,31 @@ public class Main extends Application {
 
         //Create menu bar
         final Menu menu1 = new Menu("File");
-        final Menu menu2 = new Menu("Options");
-        final Menu menu3 = new Menu("Help");
+        final Menu menu2 = new Menu("Rules");
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(menu1, menu2, menu3);
+
+        //open function to load CSV file with previous games
+        MenuItem openMenuItem = new MenuItem("Open");
+        openMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                FileChooser fileChooser = new FileChooser();
+                FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv");
+                fileChooser.getExtensionFilters().add(extFilter);
+                File file = fileChooser.showOpenDialog(primaryStage);
+                System.out.println(file);
+            }});
+
+        //save function to save game scores to CSV file
+        MenuItem saveMenuItem = new MenuItem("Save");
+        //saveMenuItem.setOnAction(actionEvent -> );
+
+        //exit function to quit the application
+        MenuItem exitMenuItem = new MenuItem("Exit");
+        exitMenuItem.setOnAction(actionEvent -> Platform.exit());
+
+        menu1.getItems().addAll(openMenuItem, saveMenuItem, exitMenuItem);
+        menuBar.getMenus().addAll(menu1, menu2);
 
         //Create side tab to right of GridPane
         Text title = new Text();
@@ -62,7 +96,7 @@ public class Main extends Application {
         bScore.setFill(Color.BLACK);
 
         HBox bRow = new HBox(10, bC, bCount, bScore);
-        VBox black = new VBox(40, title, bT, bRow);
+        VBox black = new VBox(30, title, bT, bRow);
         black.setAlignment(Pos.BASELINE_LEFT);
 
         //Setup for white score
@@ -86,13 +120,85 @@ public class Main extends Application {
         wScore.setFill(Color.WHITE);
 
         HBox wRow = new HBox(10, wC, wCount, wScore);
-        VBox white = new VBox(40, wT, wRow);
+        VBox white = new VBox(30, wT, wRow);
         white.setAlignment(Pos.BASELINE_LEFT);
 
-        VBox sideTab = new VBox(125, black, white);
+        //Leader board setup
+        Text lB = new Text();
+        lB.setText("Leaderboard:");
+        lB.setFont(Font.font("Century Gothic", FontWeight.BOLD, 40));
+        lB.setFill(Color.WHITE);
+        lB.setUnderline(true);
+
+        TableColumn nameCol = new TableColumn("Player Name");
+        nameCol.setMinWidth(150);
+        nameCol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("Name"));
+
+        //Edit Function of Name Column
+        nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        nameCol.setOnEditCommit(
+                new EventHandler<TableColumn.CellEditEvent<Person, String>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<Person, String> t) {
+                        ((Person) t.getTableView().getItems().get(
+                                t.getTablePosition().getRow())
+                        ).setName(t.getNewValue());
+                    }});
+
+        TableColumn scoreCol = new TableColumn("Player Score");
+        scoreCol.setMinWidth(150);
+        scoreCol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("Score"));
+
+        //Edit Function of Score Column
+        scoreCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        scoreCol.setOnEditCommit(
+                new EventHandler<TableColumn.CellEditEvent<Person, String>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<Person, String> t) {
+                        ((Person) t.getTableView().getItems().get(
+                                t.getTablePosition().getRow())
+                        ).setScore(t.getNewValue());
+                    }});
+
+        //ADD NEW PLAYER NAMES AND SCORES
+        final TextField addFirstName = new TextField();
+        addFirstName.setPromptText("Enter Name");
+        addFirstName.setMaxWidth(nameCol.getPrefWidth());
+
+        final TextField addScore = new TextField();
+        addScore.setMaxWidth(scoreCol.getPrefWidth());
+        addScore.setPromptText("Enter Score");
+
+        // Button to add a new Person
+        final Button addButton = new Button("Add");
+        addButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                data.add(new Person(
+                        addFirstName.getText(),
+                        addScore.getText()
+                ));
+                addFirstName.clear();
+                addScore.clear();
+            }});
+
+        HBox hb = new HBox();
+        hb.getChildren().addAll(addFirstName, addScore, addButton);
+        hb.setSpacing(10);
+
+        leaderBoard.setItems(data);
+        leaderBoard.setEditable(true);
+        leaderBoard.setMinHeight(200);
+        leaderBoard.getColumns().addAll(nameCol, scoreCol);
+
+        VBox lBoard = new VBox(15, lB, leaderBoard, hb);
+        lBoard.setAlignment(Pos.CENTER_LEFT);
+
+        VBox sideTab = new VBox(15, black, white, lBoard);
         sideTab.setMinWidth(300);
         sideTab.setAlignment(Pos.TOP_CENTER);
-        sideTab.setPadding(new Insets(50, 20, 50, 20));
+        sideTab.setPadding(new Insets(15, 20, 50, 20));
         sideTab.setBackground(new Background(new BackgroundFill(Color.SLATEGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
         //Add all panes to scene
@@ -138,5 +244,27 @@ public class Main extends Application {
 
     public int count(int n){
         return n++;
+    }
+
+    public static class Person {
+        private final SimpleStringProperty name;
+        private final SimpleStringProperty score;
+
+        private Person(String nm, String sc) {
+            this.name = new SimpleStringProperty(nm);
+            this.score = new SimpleStringProperty(sc);
+        }
+        public String getName() {
+            return name.get();
+        }
+        public void setName(String nm) {
+            name.set(nm);
+        }
+        public String getScore() {
+            return score.get();
+        }
+        public void setScore(String sc) {
+            score.set(sc);
+        }
     }
 }
