@@ -26,6 +26,8 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Main extends Application {
     public GridPane pane = new GridPane();
@@ -50,46 +52,31 @@ public class Main extends Application {
 
         //open function to load CSV file with previous games
         MenuItem openMenuItem = new MenuItem("Open");
-        openMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                FileChooser fileChooser = new FileChooser();
-                FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv");
-                fileChooser.getExtensionFilters().add(extFilter);
-                File file = fileChooser.showOpenDialog(primaryStage);
-                System.out.println(file);
-            }});
+        openMenuItem.setOnAction(e -> {
+            try {
+                leaderBoard.getItems().clear();
+                readCSV();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
 
-        //save function to save game scores to CSV file
+        //save function to save leaderboard data to CSV file
         MenuItem saveMenuItem = new MenuItem("Save");
-        //saveMenuItem.setOnAction(actionEvent -> );
+        saveMenuItem.setOnAction(e -> {
+            try {
+                writeCSV();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
 
         //exit function to quit the application
         MenuItem exitMenuItem = new MenuItem("Exit");
         exitMenuItem.setOnAction(actionEvent -> Platform.exit());
 
-        MenuItem rulesMenuItem = new MenuItem("Rulebook");
-        rulesMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-             public void handle(ActionEvent event) {
-                 Parent root;
-                 try {
-                     root = FXMLLoader.load(getClass().getClassLoader().getResource("path/to/other/view.fxml"));
-                     Stage stage = new Stage();
-                     stage.setTitle("My New Stage Title");
-                     stage.setScene(new Scene(root, 450, 450));
-                     stage.show();
-                     // Hide this current window (if this is what you want)
-                     ((Node)(event.getSource())).getScene().getWindow().hide();
-                 }
-                 catch (IOException e) {
-                     e.printStackTrace();
-                 }
-             }
-        });
-
         menu1.getItems().addAll(openMenuItem, saveMenuItem, exitMenuItem);
-        menu2.getItems().add(rulesMenuItem);
-        menuBar.getMenus().addAll(menu1, menu2);
+        menuBar.getMenus().add(menu1);
 
         //Create side tab to right of GridPane
         Text title = new Text();
@@ -292,6 +279,27 @@ public class Main extends Application {
         finally {
             writer.flush();
             writer.close();
+        }
+    }
+
+    private void readCSV() {
+        String CsvFile = "D:\\LeaderBoard.csv.";
+        String FieldDelimiter = ",";
+        BufferedReader br;
+        try {
+            br = new BufferedReader(new FileReader(CsvFile));
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] fields = line.split(FieldDelimiter, -1);
+                Person person = new Person(fields[0], fields[1]);
+                data.add(person);
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Main.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName())
+                    .log(Level.SEVERE, null, ex);
         }
     }
 
