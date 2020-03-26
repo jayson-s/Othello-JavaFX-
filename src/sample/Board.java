@@ -32,28 +32,46 @@ public class Board {
         showLegal(pane);
     }
 
-    public Board(GridPane pane, Stage stage) {
-        // fill
-        for (int i = 0; i < 8; i++) {
-            pieces.add(new ArrayList<>());  // fills with arrays
-            for (int j = 0; j < 8; j++) {
-                pieces.get(i).add(new Piece());  // fills array with pieces
+    public Board(GridPane pane) throws InterruptedException {       // creates the board
+
+        Thread fillThread = new Thread("fill"){
+            @Override
+            public void run(){
+                // fill board with invisible pieces
+                for (int i = 0; i < 8; i++) {
+                    pieces.add(new ArrayList<>());  // fills with arrays
+                    for (int j = 0; j < 8; j++) {
+                        pieces.get(i).add(new Piece());  // fills array with pieces
+                    }
+                }
             }
-        }
-        // create board
-        pane.setGridLinesVisible(true);
-        for (int i = 0; i < 8; i++) {
-            ColumnConstraints colConst = new ColumnConstraints();
-            colConst.setPercentWidth(100.0 / 8);
-            colConst.setHalignment(HPos.CENTER);
-            pane.getColumnConstraints().add(colConst);
-        }
-        for (int i = 0; i < 8; i++) {
-            RowConstraints rowConst = new RowConstraints();
-            rowConst.setPercentHeight(100.0 / 8);
-            rowConst.setValignment(VPos.CENTER);
-            pane.getRowConstraints().add(rowConst);
-        }
+        };
+
+        Thread boardCreationThread = new Thread("boardCreation"){
+            @Override
+            public void run(){
+                // create board
+                pane.setGridLinesVisible(true);
+                for (int i = 0; i < 8; i++) {
+                    ColumnConstraints colConst = new ColumnConstraints();
+                    colConst.setPercentWidth(100.0 / 8);
+                    colConst.setHalignment(HPos.CENTER);
+                    pane.getColumnConstraints().add(colConst);
+
+                    RowConstraints rowConst = new RowConstraints();
+                    rowConst.setPercentHeight(100.0 / 8);
+                    rowConst.setValignment(VPos.CENTER);
+                    pane.getRowConstraints().add(rowConst);
+                }
+            }
+        };
+
+        fillThread.start();
+        boardCreationThread.start();
+
+        fillThread.join();
+        boardCreationThread.join();
+
         start(pane);
     }
 
