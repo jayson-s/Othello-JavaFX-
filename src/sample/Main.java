@@ -7,8 +7,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -65,7 +68,27 @@ public class Main extends Application {
         MenuItem exitMenuItem = new MenuItem("Exit");
         exitMenuItem.setOnAction(actionEvent -> Platform.exit());
 
+        MenuItem rulesMenuItem = new MenuItem("Rulebook");
+        rulesMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+             public void handle(ActionEvent event) {
+                 Parent root;
+                 try {
+                     root = FXMLLoader.load(getClass().getClassLoader().getResource("path/to/other/view.fxml"));
+                     Stage stage = new Stage();
+                     stage.setTitle("My New Stage Title");
+                     stage.setScene(new Scene(root, 450, 450));
+                     stage.show();
+                     // Hide this current window (if this is what you want)
+                     ((Node)(event.getSource())).getScene().getWindow().hide();
+                 }
+                 catch (IOException e) {
+                     e.printStackTrace();
+                 }
+             }
+        });
+
         menu1.getItems().addAll(openMenuItem, saveMenuItem, exitMenuItem);
+        menu2.getItems().add(rulesMenuItem);
         menuBar.getMenus().addAll(menu1, menu2);
 
         //Create side tab to right of GridPane
@@ -173,18 +196,26 @@ public class Main extends Application {
 
         // Button to add a new Person
         final Button addButton = new Button("Add");
-        addButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                data.add(new Person(
-                        addFirstName.getText(),
-                        addScore.getText()
-                ));
-                addFirstName.clear();
-                addScore.clear();
-            }});
+        addButton.setOnAction(e -> {
+            data.add(new Person(
+                    addFirstName.getText(),
+                    addScore.getText()
+            ));
+            addFirstName.clear();
+            addScore.clear();
+        });
+
+        final Button saveButton = new Button("Save");
+        saveButton.setOnAction(e -> {
+            try {
+                writeCSV();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
 
         HBox hb = new HBox();
-        hb.getChildren().addAll(addFirstName, addScore, addButton);
+        hb.getChildren().addAll(addFirstName, addScore, addButton, saveButton);
         hb.setSpacing(10);
 
         leaderBoard.setItems(data);
@@ -244,6 +275,24 @@ public class Main extends Application {
 
     public int count(int n){
         return n++;
+    }
+
+    public void writeCSV() throws Exception {
+        Writer writer = null;
+        try {
+            File file = new File("D:\\LeaderBoard.csv.");
+            writer = new BufferedWriter(new FileWriter(file));
+            for (Person person : data) {
+                String text = person.getName() + "," + person.getScore() + "\n";
+                writer.write(text);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            writer.flush();
+            writer.close();
+        }
     }
 
     public static class Person {
