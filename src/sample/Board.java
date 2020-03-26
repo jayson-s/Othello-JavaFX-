@@ -18,6 +18,8 @@ public class Board {
     protected int scoreB = 0;
     protected int scoreW = 0;
     protected ArrayList<Circle> possibleMoves = new ArrayList<>();
+    public InitializeNetwork gameConn;
+
 
     //array of pieces
     protected ArrayList<ArrayList<Piece>> pieces = new ArrayList<>(8);
@@ -33,7 +35,9 @@ public class Board {
 
     }
 
-    public Board(GridPane pane, Stage stage) {
+    public Board(InitializeNetwork gameConn, GridPane pane, Stage stage) {
+        this.gameConn = gameConn;
+
         // fill
         for (int i = 0; i < 8; i++) {
             pieces.add(new ArrayList<>());  // fills with arrays

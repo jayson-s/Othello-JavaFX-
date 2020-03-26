@@ -11,7 +11,7 @@ public class Piece {
     public void toggle() {
         if (isWhite == 0) {
             isWhite = 1;
-            circle.setFill(Color.WHITE);
+            circle.setFill(Color.BLUE);
         }
         else if (isWhite == 1) {
             isWhite = 0;
