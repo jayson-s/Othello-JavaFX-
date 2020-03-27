@@ -23,6 +23,6 @@ Clone the repository to your local machine using Github's built-in features or o
 - Once the project is open, go to **File > Project Structure > Libraries > +** and navigate to your local JavaFX `lib` file to add it to the project.
 - Open the project configuration menu located at the top right of the IDE and select **Edit Configuration**.
 - Add `--module-path ${PATH_TO_FX} --add-modules javafx.controls,javafx.fxml` to the **VM Options** if it is not added already (it should be).
-- Press **Run** to see the results of each program. 
+- Choose the `Othello [run]` configuration and press **Run** to see the program. 
 #
 _Please contact one of the contributors if you have any issues!_
