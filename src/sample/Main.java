@@ -33,7 +33,7 @@ public class Main extends Application {
                     new Person("Ben", "36"));
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Board board = new Board(pane, primaryStage);
+        Board board = new Board(pane);
         BorderPane root = new BorderPane();
 
         //Set game pane in center and set background color
