@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 
 public class Main extends Application {
     public GridPane pane = new GridPane();
-    private TableView<Person> leaderBoard = new TableView<Person>();
+    private TableView<Person> leaderBoard = new TableView<>();
     private final ObservableList<Person> data =
             FXCollections.observableArrayList(
                     new Person("Jayson", "40"),
